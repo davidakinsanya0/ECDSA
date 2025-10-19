@@ -4,9 +4,35 @@ const cors = require("cors");
 const port = 3042;
 
 const { secp256k1 } = require("ethereum-cryptography/secp256k1");
+const { keccak256 } = require("ethereum-cryptography/keccak");
+const { utf8ToBytes, toHex } = require("ethereum-cryptography/utils");
 
 app.use(cors());
 app.use(express.json());
+
+function bigIntTo32Bytes(num) {
+  const bytes = new Uint8Array(32);
+  let n = num;
+  for (let i = 31; i >= 0; i--) {
+    bytes[i] = Number(n & 0xffn);
+    n >>= 8n;
+  }
+  return bytes;
+}
+
+async function recoverKey(message, signature, recovery) {
+  const newSignature = secp256k1.Signature.fromCompact(toHex(signature), recovery);
+  
+  const {r, s} = newSignature;
+  const compactBytes = new Uint8Array(64);
+
+  compactBytes.set(bigIntTo32Bytes(r), 0);
+  compactBytes.set(bigIntTo32Bytes(s), 32);   
+  
+  const sig = secp256k1.Signature.fromCompact(compactBytes, recovery);
+  console.log(sig);
+  //return sig.recoverPublicKey(message).toHex();
+}
 
 const balances = {
   "f883e87d61fb8e11ea127ca8f9eddf5aa5240a7c": 100, // Priv Key:  8b6e76b1a1b1163c5ac7b0f550941df0874f1c871674891372ce8d88ec332506
@@ -26,8 +52,10 @@ app.post("/send", (req, res) => {
 
 
  
-   const { messageHash, signature } = req.body;
-   //const recovered = secp256k1.recoverPublicKey(messageHash, signature, signature.recovery);
+   const { messageHash, signature, recovery } = req.body;
+   const signatureInBytes = new Uint8Array(Object.values(signature));
+   const recovered = recoverKey(messageHash, signatureInBytes, recovery);
+   // console.log(recovered);
   
 
   /*
