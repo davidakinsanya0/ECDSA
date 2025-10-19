@@ -7,10 +7,10 @@ app.use(cors());
 app.use(express.json());
 
 const balances = {
-  "0x1": 100,
-  "0x2": 50,
-  "0x3": 75,
-};
+  "f883e87d61fb8e11ea127ca8f9eddf5aa5240a7c": 100, // Priv Key:  8b6e76b1a1b1163c5ac7b0f550941df0874f1c871674891372ce8d88ec332506
+  "79cbea124aaa07cd3fb97d96fbf9da671d127d13": 50, // Priv Key: 7b2e8a1591cfcd61de8045f5397f0fe01befb93514c1cf9161afc7247422b32e
+  "3c713d3ed35cfda832033f9fc665a2202ae92243": 75, // Priv Key: e9b4a31e0e5bb098cd25c239a5fdee8fa2dfef2c39658d30f50dfcf06c6f5d3f
+}
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
