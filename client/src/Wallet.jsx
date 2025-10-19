@@ -11,8 +11,6 @@ function Wallet({ address, setAddress, balance, setBalance, privateKey, setPriva
     setPrivateKey(privateKey);
     const hashedAddress = keccak256(secp256k1.getPublicKey(privateKey).slice(1));
     const address = toHex(hashedAddress.slice(-20));
-  
-    console.log(address);
     setAddress(address);
 
     if (address) {

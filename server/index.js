@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 const port = 3042;
 
+const { secp256k1 } = require("ethereum-cryptography/secp256k1");
+
 app.use(cors());
 app.use(express.json());
 
@@ -19,7 +21,17 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  const { sender, recipient, amount } = req.body;
+  // TODO: Create a sigunature from the client-side.
+  // TODO: Recover public address from the signature.
+
+
+ 
+   const { messageHash, signature } = req.body;
+   //const recovered = secp256k1.recoverPublicKey(messageHash, signature, signature.recovery);
+  
+
+  /*
+  // const { signature, recipient, amount } = req.body;
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
@@ -31,6 +43,7 @@ app.post("/send", (req, res) => {
     balances[recipient] += amount;
     res.send({ balance: balances[sender] });
   }
+    */
 });
 
 app.listen(port, () => {
