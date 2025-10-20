@@ -3,7 +3,7 @@ const { keccak256 } = require("ethereum-cryptography/keccak");
 const { toHex, hexToBytes } = require("ethereum-cryptography/utils");
 
 // Generate a random private key
-const privateKey = hexToBytes("8b6e76b1a1b1163c5ac7b0f550941df0874f1c871674891372ce8d88ec332506"); // secp256k1.utils.randomPrivateKey();
+const privateKey = secp256k1.utils.randomPrivateKey();
 
 // Get the public key (uncompressed form)
 const publicKey = secp256k1.getPublicKey(privateKey);

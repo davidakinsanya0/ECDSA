@@ -48,7 +48,8 @@ function Transfer({ address, setBalance, privateKey }) {
         data: { balance },
       } = await server.post(`send`, {
         messageHash: msgHashed,
-        signature: obj
+        signature: obj,
+        payload: tx
       });
       setBalance(balance);
     } catch (ex) {

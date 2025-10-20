@@ -32,19 +32,21 @@ app.post("/send", (req, res) => {
 
 
  
-   const { messageHash, signature } = req.body;
-   const recovered = recoverKey(messageHash, signature);
-   
-   recovered.then((str) => {
-      const publicKey = hexToBytes(str);
-      const hash = keccak256(publicKey.slice(1));
-      const address = hash.slice(-20);
-      console.log(toHex(address));
-   })
+  const { messageHash, signature, payload } = req.body;
+  const recovered = recoverKey(messageHash, signature);
+  let recoveredAddress = "";
+
+  recovered.then((str) => {
+    const publicKey = hexToBytes(str);
+    const hash = keccak256(publicKey.slice(1));
+    const address = hash.slice(-20);
+
+    recoveredAddress = toHex(address);
+  })
   
 
   /*
-  // const { signature, recipient, amount } = req.body;
+  // const { signature, recipient, amount } = payload;
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
