@@ -35,16 +35,20 @@ function Transfer({ address, setBalance, privateKey }) {
     let txObj = JSON.stringify(tx);
   
     const signedMsg = await signMessage(txObj, privateKey);
-    const signatureBytes = signedMsg.toCompactRawBytes();
     const msgHashed = toHex(hashMessage(txObj));
+
+    const obj = {
+      r: signedMsg.r.toString(),
+      s: signedMsg.s.toString(),
+      recovery: signedMsg.recovery
+    }
 
     try {
       const {
         data: { balance },
       } = await server.post(`send`, {
         messageHash: msgHashed,
-        signature: signatureBytes,
-        recovery: signedMsg.recovery
+        signature: obj
       });
       setBalance(balance);
     } catch (ex) {
