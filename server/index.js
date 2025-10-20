@@ -10,16 +10,6 @@ const { utf8ToBytes, toHex, hexToBytes } = require("ethereum-cryptography/utils"
 app.use(cors());
 app.use(express.json());
 
-function bigIntTo32Bytes(num) {
-  const bytes = new Uint8Array(32);
-  let n = num;
-  for (let i = 31; i >= 0; i--) {
-    bytes[i] = Number(n & 0xffn);
-    n >>= 8n;
-  }
-  return bytes;
-}
-
 async function recoverKey(message, signature) {
   const {r, s, recovery} = signature;
   const sig = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
@@ -39,13 +29,12 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  // TODO: Create a sigunature from the client-side.
-  // TODO: Recover public address from the signature.
 
 
  
    const { messageHash, signature } = req.body;
    const recovered = recoverKey(messageHash, signature);
+   
    recovered.then((str) => {
       const publicKey = hexToBytes(str);
       const hash = keccak256(publicKey.slice(1));
