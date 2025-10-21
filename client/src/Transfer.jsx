@@ -37,10 +37,11 @@ function Transfer({ address, setBalance, privateKey }) {
     const signedMsg = await signMessage(txObj, privateKey);
     const msgHashed = toHex(hashMessage(txObj));
 
+
     const obj = {
       r: signedMsg.r.toString(),
       s: signedMsg.s.toString(),
-      recovery: signedMsg.recovery
+      recovery: signedMsg.recovery,
     }
 
     try {
@@ -51,6 +52,8 @@ function Transfer({ address, setBalance, privateKey }) {
         signature: obj,
         payload: tx
       });
+
+  
       setBalance(balance);
     } catch (ex) {
       alert(ex.response.data.message);

@@ -28,37 +28,37 @@ app.get("/balance/:address", (req, res) => {
   res.send({ balance });
 });
 
-app.post("/send", (req, res) => {
+app.post("/send", async (req, res) => {
 
-
- 
   const { messageHash, signature, payload } = req.body;
   const recovered = recoverKey(messageHash, signature);
-  let recoveredAddress = "";
 
-  recovered.then((str) => {
+  let recoveredAddress = recovered.then((str) => {
     const publicKey = hexToBytes(str);
     const hash = keccak256(publicKey.slice(1));
     const address = hash.slice(-20);
-
-    recoveredAddress = toHex(address);
-  })
+    return toHex(address);
   
+  })
 
-  /*
-  // const { signature, recipient, amount } = payload;
+  let addr = await recoveredAddress;
+  
+  if (Object.keys(balances).includes(addr)) {
+      const { sender, recipient, amount } = payload;
 
-  setInitialBalance(sender);
-  setInitialBalance(recipient);
+      setInitialBalance(sender);
+      setInitialBalance(recipient);
 
-  if (balances[sender] < amount) {
-    res.status(400).send({ message: "Not enough funds!" });
-  } else {
-    balances[sender] -= amount;
-    balances[recipient] += amount;
-    res.send({ balance: balances[sender] });
-  }
-    */
+      if (balances[sender] < amount) {
+        res.status(400).send({ message: "Not enough funds!" });
+      } else {
+        balances[sender] -= amount;
+        balances[recipient] += amount;
+        res.send({ balance: balances[sender] });
+      }
+    } else {
+      res.status(400).send({ message: "Invalid address" });
+    }
 });
 
 app.listen(port, () => {
