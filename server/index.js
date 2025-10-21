@@ -10,10 +10,13 @@ const { utf8ToBytes, toHex, hexToBytes } = require("ethereum-cryptography/utils"
 app.use(cors());
 app.use(express.json());
 
-async function recoverKey(message, signature) {
+function getSignature(signature) {
   const {r, s, recovery} = signature;
-  const sig = new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
-  return sig.recoverPublicKey(hexToBytes(message)).toHex();
+  return new secp256k1.Signature(BigInt(r), BigInt(s), recovery);
+}
+
+async function recoverKey(message, signature) {
+  return getSignature(signature).recoverPublicKey(hexToBytes(message)).toHex();
 }
 
 const balances = {
@@ -35,9 +38,12 @@ app.post("/send", async (req, res) => {
 
   let recoveredAddress = recovered.then((str) => {
     const publicKey = hexToBytes(str);
+    const isSigned = secp256k1.verify(getSignature(signature), messageHash, publicKey);
+
     const hash = keccak256(publicKey.slice(1));
     const address = hash.slice(-20);
-    return toHex(address);
+
+    return isSigned ? toHex(address) : "";
   
   })
 
